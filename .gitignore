@@ -1,12 +1,14 @@
+#Fichier des test
+data*
+cvhull_MP_NiCuCoFe.ipynb
+Test_Convexhull.ipynb
+convexhull_script
+cvhull.ipynb
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-#Fichier des test
-data*
-cvhull_MP_NiCuCoFe.ipynb
-Test_Convexhull.ipynb
 # C extensions
 *.so
 

@@ -140,14 +140,14 @@ distance_hull(nom)
         self.instable=np.array(instable,dtype='int32') # Liste des index des composés pas stable
          
         #On cherche la valeur du centre de l'hyper-plan des elements pur
-        E0=np.array(E0s).mean() 
+        E0=np.array(E0s).mean()
         equation=[]
         sommets=[]
         x=1/self.dim
         x=[x for _ in range(self.dim-1)]
         
         #On ne considére pas les plan orthogonal à l'energie
-        #On prens seulement les hyper plan qui ont un centre plus bas que celui des élement
+        #On prens seulement les hyper plan qui ont un centre plus bas que celui des élements purs
         for i in range(len(qh.equations)):
             if qh.equations[i][-2]!=0:
                 if f_eq(x,qh.equations[i])<E0:
@@ -255,7 +255,7 @@ distance_hull(nom)
                 proportion=result[:,-1]
                 fmt="{:."+str(decimale)+"f}"
                 fmt2="{:."+str(decimale)+"f}{:} + "
-                print("Ce composé n'est pas stable")
+                print("Le composé",nom,"composé n'est pas stable")
                 print("-----------------------------")
                 print("\u0394H = "+fmt.format(de))
                 print("Il se décompose en :")
