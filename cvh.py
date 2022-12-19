@@ -70,6 +70,11 @@ distance_hull(nom)
                 print("Erreur dans les paramètres d'entrée :")
                 print("La somme des éléments de 'composition' doit être égale à 1")
                 sys.exit()
+        #Nombre de points
+        if len(nom)<=len(composition[0]):
+            print("Erreur : Il faut au minimum un nombre de points superieur à la dimensions des points")
+            print("Ici il faut donc au minimum {} points alors que vous en avez mit ".format(len(composition[0])+1))
+            sys.exit()
         #Tableau des noms
         tmp=[]
         if type(nom)!=list:
@@ -101,11 +106,8 @@ distance_hull(nom)
         self.composition=np.array(composition,dtype='float64') # composition
         self.energie=np.array(energie,dtype='float64') # energies
         self.decimale=decimale #Nombre de chiffre apres la virgule pour les composition
-        # On met les points au format quickhull [composition sauf une + energie] 
-        points=[[x for x in composition[i]][:-1]+[energie[i]] for i in range(len(nom))]
-        self.npoints=len(points) #nombre de points
-        self.points=np.array(points) #liste de points dans le format quickhull
-        self.dim=len(points[0]) # Dimension des points
+        self.npoints=len(composition) #nombre de points
+        self.dim=len(composition[0]) # Dimension des points
         
         #On cherche l'energie des élements pur
         E0s=[True for _ in range(self.dim)]
@@ -114,8 +116,8 @@ distance_hull(nom)
         for i in range(self.npoints):
             for j in range(self.dim):
                 if self.composition[i,j]==1:
-                    check[j]=True
-                    if E0s[j]:
+                    if not check[j]:
+                        check[j]=True
                         E0s[j]=self.energie[i]
                         iE0s[j]=i
                     elif self.energie[i]<E0s[j]:
@@ -124,47 +126,69 @@ distance_hull(nom)
 
         if not check.all(): 
             sys.exit("Maque certains paramètres : Il faut mettre les éléments purs")
-        
-        qh=cvh(points)
-        #Les élements stable sont les éléments de l'enveloppe convexe inférieur à la 
-        #combinaison des élements purs
-        stable=[]
-        for i in qh.vertices:
-            if self.energie[i]<=fp(self.composition[i][:-1],E0s):
-                stable.append(i)
-        self.stable=np.array(stable,dtype='int32') # Liste des index des composés stables
-        instable=[]
-        for i in range(self.npoints):
-            if not i in self.stable:
-                instable.append(i)
-        self.instable=np.array(instable,dtype='int32') # Liste des index des composés pas stable
          
-        #On cherche la valeur du centre de l'hyper-plan des elements pur
-        E0=np.array(E0s).mean()
-        equation=[]
-        sommets=[]
-        x=1/self.dim
-        x=[x for _ in range(self.dim-1)]
-        
-        #On ne considére pas les plan orthogonal à l'energie
-        #On prens seulement les hyper plan qui ont un centre plus bas que celui des élements purs
-        for i in range(len(qh.equations)):
-            if qh.equations[i][-2]!=0:
-                if f_eq(x,qh.equations[i])<E0:
-                    equation.append(qh.equations[i])
-                    sommets.append(qh.simplices[i])
-        if len(equation)!=0:
-            self.equations=equation
-            self.sommets=sommets
-        else :
+        #Pour le calcul de l'enveloppe convexe, on ne prend que les points
+        #inférieur à la combinaison des élements purs
+        points=[] #Points au format quickhull [composition sauf une + energie]
+        indices=[] #indice des points dans le tableau self.nom
+        for i in range(self.npoints):
+            if self.energie[i]<=fp(self.composition[i][:-1],E0s):
+                points.append([x for x in composition[i]][:-1]+[energie[i]])
+                indices.append(i)
+        #Si les seuls points stables sont les éléments purs
+        if len(points)==self.dim: 
+            print('-----------------------------------')
+            print('Seul les composés purs sont stables')
+            print('-----------------------------------')
             eq=[]
-            for i in range(1,self.dim):
+            for i in range(self.dim-1):
                 eq.append(E0s[-1]-E0s[i])
             
             eq.append(1)
             eq.append(-E0s[-1])
             self.equations=[eq]
             self.sommets=[iE0s]
+            self.stable=iE0s
+            instable=[]
+            for i in range(self.npoints):
+                if not i in self.stable:
+                    instable.append(i)
+            self.instable=np.array(instable,dtype='int32')
+        
+        #Si il y a plus de composé stable
+        else:
+            qh=cvh(points)
+            #On cherche quels sont+ les points stables
+            stable=[]
+            instable=[]
+            for i in qh.vertices :
+                stable.append(indices[i])
+            self.stable=np.array(stable,dtype='int32') # Liste des index des composés stables
+            for i in range(self.npoints):
+                if not i in self.stable:
+                    instable.append(i)
+            self.instable=np.array(instable,dtype='int32') # Liste des index des composés pas stable
+            
+        #Selection des sommets et des facttes
+            equation=[]
+            sommets=[]
+            ener_centre=[]
+            x=1/self.dim
+            x=[x for _ in range(self.dim-1)]
+            
+            #On prens tout les facettes de l'envelope sauf celles ortho à E
+            for i in range(len(qh.equations)):
+                if qh.equations[i][-2]!=0: # plans orthogonal à l'energie
+                    equation.append(qh.equations[i])
+                    sommets.append(qh.simplices[i])
+                    ener_centre.append(f_eq(x,qh.equations[i]))
+            #On enleve la facette de plus haute énergie (partie haute de l'enveloppe)
+            index_pop=ener_centre.index(max(ener_centre))
+            equation.pop(index_pop)
+            sommets.pop(index_pop)
+            self.equations=equation
+            self.sommets=[[indices[i] for i in som] for som in sommets]
+
         
     def energie_hull(self,compo):
         """
@@ -226,7 +250,7 @@ distance_hull(nom)
             print(identite(self.dim))
             sys.exit('Erreur dans la resolution des équations')
 
-    def distance_hull(self,nom,decimale=4):
+    def distance_hull(self,nom,decimale=4,sortie=True):
         """
         Méthode qui donne l'écart en énergie par rapport à l'enveloppe covexe du composé 'nom'
         si il n'est pas stable elle donne la décomposition
@@ -244,30 +268,31 @@ distance_hull(nom)
             ifstable=True
         else :
             ifstable=False
-            matrix=np.ones([self.dim,self.dim+1])
-            for j,pt in enumerate(decomposition_points):
+            if sortie:
+                matrix=np.ones([self.dim,self.dim+1])
+                for j,pt in enumerate(decomposition_points):
+                    for i in range(self.dim-1):
+                        matrix[i,j]=self.composition[pt][i]
                 for i in range(self.dim-1):
-                    matrix[i,j]=self.composition[pt][i]
-            for i in range(self.dim-1):
-                matrix[i,-1]=compo[i]
-            result=resol(matrix)
-            if (result[:,:-1]==identite(self.dim)).all() :
-                proportion=result[:,-1]
-                fmt="{:."+str(decimale)+"f}"
-                fmt2="{:."+str(decimale)+"f}{:} + "
-                print("Le composé",nom,"composé n'est pas stable")
-                print("-----------------------------")
-                print("\u0394H = "+fmt.format(de))
-                print("Il se décompose en :")
-                txt=""
-                for i in range(self.dim):
-                    if proportion[i]!=0:
-                        txt+=fmt2.format(proportion[i],nom_dcp[i])
-                txt=txt[:-3]
-                print(txt)
-            else :
-                print(result[:,:-1])
-                print(identite(self.dim))
-                sys.exit('Erreur dans la resolution des équations')
+                    matrix[i,-1]=compo[i]
+                result=resol(matrix)
+                if (result[:,:-1]==identite(self.dim)).all() :
+                    proportion=result[:,-1]
+                    fmt="{:."+str(decimale)+"f}"
+                    fmt2="{:."+str(decimale)+"f}{:} + "
+                    print("Le composé",nom," n'est pas stable")
+                    print("--------------------------------------------")
+                    print("\u0394H = "+fmt.format(de))
+                    print("Il se décompose en :")
+                    txt=""
+                    for i in range(self.dim):
+                        if proportion[i]!=0:
+                            txt+=fmt2.format(proportion[i],nom_dcp[i])
+                    txt=txt[:-3]
+                    print(txt)
+                else :
+                    print(result[:,:-1])
+                    print(identite(self.dim))
+                    sys.exit('Erreur dans la resolution des équations')
         return de,ifstable
         

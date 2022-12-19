@@ -24,7 +24,7 @@ def fp(xs,es):
         e+=(es[i]-e0)*xs[i]
     return e
 #Resoud le systeme y ; la derniere colones de y corespond au terme à droite du signe égal
-def resol(y):
+def resol(y,acc=10):
     x=np.array(y,float)
     
     variables=[]
@@ -66,9 +66,11 @@ def resol(y):
                 for col in range(N+1):
                     x[lin,col]*=fact
                 x_new.append(x[lin])
-        
+    
     x=np.array(x_new)
-                  
+    for i in range(x.shape[0]):
+        for j in range(x.shape[1]):
+            x[i,j]=round(x[i,j],acc)
     return x
 #Ecrit la marice identité de dimention x
 def identite(x):
