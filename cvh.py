@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Infos code
-VERSION='2.0'
+VERSION=2.0
 NAME_CODE='cvh'
 DEPENDANCE='cvh_fonc.py'
 
