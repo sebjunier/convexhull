@@ -1,5 +1,9 @@
-#!/usr/bin/env python3
+#!/home/sjunier/miniconda3
 # -*- coding: utf-8 -*-
+
+#Info module
+NAME_CODE='cvh_fonc'
+VERSION=1.0
 
 #Module
 import numpy as np
