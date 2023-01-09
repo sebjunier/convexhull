@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Infos code
-VERSION=2.0
+VERSION=2.2
 NAME_CODE='cvh'
 DEPENDANCE='cvh_fonc.py'
 
@@ -115,9 +115,9 @@ distance_hull(nom)
         self.dim=len(composition[0]) # Dimension des points
         
         #On cherche l'energie des élements pur
-        E0s=[True for _ in range(self.dim)]
-        check=np.array([False for _ in range(self.dim)])
-        iE0s=[None for _ in range(self.dim)]
+        E0s=[True for _ in range(self.dim)] # Energie du l'élément pur sur l'axe i
+        check=np.array([False for _ in range(self.dim)]) # True si on a deja un points sur l'axe i
+        iE0s=[None for _ in range(self.dim)] # indice de l'éléments pur sur l'axe i
         for i in range(self.npoints):
             for j in range(self.dim):
                 if self.composition[i,j]==1:
@@ -140,12 +140,19 @@ distance_hull(nom)
             if self.energie[i]<=fp(self.composition[i][:-1],E0s):
                 points.append([x for x in composition[i]][:-1]+[energie[i]])
                 indices.append(i)
+        #On vérifie que les elements purs ont bien été pris
+        for i in iE0s:
+            if not i in indices:
+                points.append([x for x in composition[i]][:-1]+[energie[i]])
+                indices.append(i)
+
         #Si les seuls points stables sont les éléments purs
         if len(points)==self.dim: 
             print('-----------------------------------')
             print('Seul les composés purs sont stables')
             print('-----------------------------------')
             eq=[]
+            #Equation d'un hyper plan passant par les ndim points E0s
             for i in range(self.dim-1):
                 eq.append(E0s[-1]-E0s[i])
             
@@ -153,7 +160,7 @@ distance_hull(nom)
             eq.append(-E0s[-1])
             self.equations=[eq]
             self.sommets=[iE0s]
-            self.stable=iE0s
+            self.stable=np.array(iE0s,dtype='int32')
             instable=[]
             for i in range(self.npoints):
                 if not i in self.stable:
@@ -163,11 +170,12 @@ distance_hull(nom)
         #Si il y a plus de composé stable
         else:
             qh=cvh(points)
-            #On cherche quels sont+ les points stables
+            #On cherche quels sont les points stables
             stable=[]
             instable=[]
             for i in qh.vertices :
-                stable.append(indices[i])
+                stable.append(indices[i]) #Les indices de qh ne sont pas bons
+                                          #L'indice correct des points est dans le tableau 'indices'
             self.stable=np.array(stable,dtype='int32') # Liste des index des composés stables
             for i in range(self.npoints):
                 if not i in self.stable:
@@ -185,14 +193,14 @@ distance_hull(nom)
             for i in range(len(qh.equations)):
                 if qh.equations[i][-2]!=0: # plans orthogonal à l'energie
                     equation.append(qh.equations[i])
-                    sommets.append(qh.simplices[i])
+                    sommets.append([indices[j] for j in qh.simplices[i]])
                     ener_centre.append(f_eq(x,qh.equations[i]))
             #On enleve la facette de plus haute énergie (partie haute de l'enveloppe)
             index_pop=ener_centre.index(max(ener_centre))
             equation.pop(index_pop)
             sommets.pop(index_pop)
             self.equations=equation
-            self.sommets=[[indices[i] for i in som] for som in sommets]
+            self.sommets=sommets
 
         
     def energie_hull(self,compo):
@@ -200,7 +208,7 @@ distance_hull(nom)
         Méthode qui donne l'énergie de l'enveloppe convexe à la composition 'compo'
         """
         #Equation d'un hyperplan à partir des paramètres p (exemple : p1x + p2y + p3 = 0)
-        #Tests
+        #Verification de la composition
         somme=0
         for x in compo:
             somme+=x
@@ -227,7 +235,7 @@ distance_hull(nom)
         Méthode qui donne les phases stable à la composition 'compo'
         les valeurs sont exprimé avec 'decimale' chifres apres la virgules (defaut :4)'
         """
-        ehull,ieq=self.energie_hull(compo)
+        ehull,ieq=self.energie_hull(compo) #verif de la compo dans la méthode
         decomposition_points=self.sommets[ieq]
         nom_dcp=[self.nom[i] for i in decomposition_points]
         matrix=np.ones([self.dim,self.dim+1])
