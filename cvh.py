@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Infos code
-VERSION=2.2
+VERSION=2.3
 NAME_CODE='cvh'
 DEPENDANCE='cvh_fonc.py'
 
@@ -191,7 +191,7 @@ distance_hull(nom)
             
             #On prens tout les facettes de l'envelope sauf celles ortho à E
             for i in range(len(qh.equations)):
-                if qh.equations[i][-2]!=0: # plans orthogonal à l'energie
+                if round(qh.equations[i][-2],10)!=0: # plans orthogonal à l'energie
                     equation.append(qh.equations[i])
                     sommets.append([indices[j] for j in qh.simplices[i]])
                     ener_centre.append(f_eq(x,qh.equations[i]))
