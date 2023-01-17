@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #Infos code
-VERSION=2.3
+VERSION=2.4
 NAME_CODE='cvh'
 DEPENDANCE='cvh_fonc.py'
 
@@ -248,7 +248,7 @@ distance_hull(nom)
         rtest=np.array([[round(result[i,j],10) for i in range(self.dim)] for j in range(self.dim)])
         if (rtest==identite(self.dim)).all() :
             proportion=result[:,-1]
-            fmt2="{:."+str(decimale)+"f}{:} + "
+            fmt2="{:."+str(decimale)+"f}({:}) + "
             print("Les phases stables sont :")
             txt=""
             for i in range(self.dim):
@@ -292,7 +292,7 @@ distance_hull(nom)
                 if (result[:,:-1]==identite(self.dim)).all() :
                     proportion=result[:,-1]
                     fmt="{:."+str(decimale)+"f}"
-                    fmt2="{:."+str(decimale)+"f}{:} + "
+                    fmt2="{:."+str(decimale)+"f}({:}) + "
                     print("Le composé",nom," n'est pas stable")
                     print("--------------------------------------------")
                     print("\u0394H = "+fmt.format(de))
