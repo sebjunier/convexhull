@@ -266,7 +266,7 @@ distance_hull(nom)
     def distance_hull(self,nom,decimale=4,sortie=True):
         """
         Méthode qui donne l'écart en énergie par rapport à l'enveloppe covexe du composé 'nom'
-        si il n'est pas stable elle donne la décomposition
+        si il n'est pas stable elle donne la décomposition (peut être empéché avec sortie=False)
         Les valeur sont donnée avec 'decimale' chiffres après la virgule 
         """
         index=self.nom.index(nom)
