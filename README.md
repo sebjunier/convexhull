@@ -15,7 +15,10 @@ La classe prend en entrée un nombre N de phases de c éléments et caculs les p
 * `nom` str[N] : liste des noms des phases d'entrée
 * `composition` float[N,c] : liste des compsitions des phases
 * `energie` float[N] : liste des énergie des phases
-* `prec` int : nombre de chiffres après la virgule utlisé pour les compositions (défaut=4)
+* `prec` int : nombre de chiffres après la virgule utlisé pour les compositions (défaut=4)\
+*Les phases doivent toutes avoir un nom différent*\
+*Le code ne fonctionne pas si toutes les références (éléments purs) ne sont pas donnée. Il faut donc les ajouter en entrée même si elle sont égale = 0*
+
 ### Attributs :
 * `cvhull.nom` str[N] : Liste des noms des phases d'entrée
 * `cvhull.composition` np.array([N,c],float) : Liste des compsitions des phases
