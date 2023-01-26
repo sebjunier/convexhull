@@ -15,18 +15,16 @@ from cvh_fonc import *
 #Classe
 class cvhull :
     """
-Classe pour déterminer la stabilité des composé par calcul d'enveloppe convexe
+Classe pour déterminer la stabilité des phases par calcul d'enveloppe convexe
 ----------------------------------------------------------------------------------------------------
-La classe prend en entrée une nombre N de composé de c éléments et caculs les composé stable et
-instable
+La classe prend en entrée une nombre N de phases de c éléments et caculs les phases stables et instables
 
 Paramètres:
 -----------
-nom | [str(N)]                : liste des nom des composés d'entrée
-composition | [[float(c)](N)] : liste des compsitions des composés
-energie | [flaot(N)]          : liste des énergie des composés
-
-decimale | int (default=4)    : nombre de chiffres après la virgule utlisés pour les compositions
+nom | [str(N)]                : liste des noms des phases d'entrée
+composition | [[float(c)](N)] : liste des compsitions des phases
+energie | [flaot(N)]          : liste des énergie des phases
+prec | int (default=4)    : nombre de chiffres après la virgule utlisé pour les compositions
 
 Atributs:
 ---------
@@ -38,7 +36,7 @@ points      | np.array([N,c],float) : Liste de points dans le format quickhull
                                       [composition sauf une + energie]
 npoints  | int : Nombre de points
 dim      | int : Dimension des composés
-decimale | int : Nombre de chifres après la vigures considéré
+prec | int : Nombre de chifres après la vigures considéré
 
 stable   | np.array([N],int) : Liste des index des composés stables
 instable | np.array([N],int) : Liste des index des composés pas stable
@@ -52,7 +50,7 @@ energie_hull(compo)
 energie_compose(nom)
 distance_hull(nom)
 """
-    def __init__(self,nom,composition,energie,decimale=4) :
+    def __init__(self,nom,composition,energie,prec=4) :
         #-----------------------------------------------------------Verification des donnée d'entrée
         #Taille des tableau d'entré
         if not len(nom)==len(composition)==len(energie):
@@ -71,7 +69,7 @@ distance_hull(nom)
             somme=0
             for x in compo:
                 somme+=x
-            if round(somme,decimale)!=1:
+            if round(somme,prec)!=1:
                 print("Erreur dans les paramètres d'entrée :")
                 print("La somme des éléments de 'composition' doit être égale à 1")
                 sys.exit()
@@ -110,7 +108,7 @@ distance_hull(nom)
         self.nom=nom # nom des composés
         self.composition=np.array(composition,dtype='float64') # composition
         self.energie=np.array(energie,dtype='float64') # energies
-        self.decimale=decimale #Nombre de chiffre apres la virgule pour les composition
+        self.prec=prec #Nombre de chiffre apres la virgule pour les composition
         self.npoints=len(composition) #nombre de points
         self.dim=len(composition[0]) # Dimension des points
         
@@ -206,13 +204,16 @@ distance_hull(nom)
     def energie_hull(self,compo):
         """
         Méthode qui donne l'énergie de l'enveloppe convexe à la composition 'compo'
+        ------------------------
+        Paramètres:
+        compo | float[self.dim] : composition
         """
         #Equation d'un hyperplan à partir des paramètres p (exemple : p1x + p2y + p3 = 0)
         #Verification de la composition
         somme=0
         for x in compo:
             somme+=x
-        if round(somme,self.decimale)!=1:
+        if round(somme,self.prec)!=1:
             print("Erreur dans les paramètres d'entrée :")
             print("La somme des éléments de 'composition' doit être égale à 1")
             sys.exit()
@@ -230,10 +231,10 @@ distance_hull(nom)
         index=self.nom.index(nom)
         return self.energie[index]
     
-    def phases_stables(self,compo,decimale=4):
+    def phases_stables(self,compo,prec=4):
         """
         Méthode qui donne les phases stable à la composition 'compo'
-        les valeurs sont exprimé avec 'decimale' chifres apres la virgules (defaut :4)'
+        les valeurs sont exprimé avec 'prec' chifres apres la virgules (defaut :4)'
         """
         ehull,ieq=self.energie_hull(compo) #verif de la compo dans la méthode
         decomposition_points=self.sommets[ieq]
@@ -248,7 +249,7 @@ distance_hull(nom)
         rtest=np.array([[round(result[i,j],10) for i in range(self.dim)] for j in range(self.dim)])
         if (rtest==identite(self.dim)).all() :
             proportion=result[:,-1]
-            fmt2="{:."+str(decimale)+"f}({:}) + "
+            fmt2="{:."+str(prec)+"f}({:}) + "
             print("Les phases stables sont :")
             txt=""
             for i in range(self.dim):
@@ -263,11 +264,11 @@ distance_hull(nom)
             print(identite(self.dim))
             sys.exit('Erreur dans la resolution des équations')
 
-    def distance_hull(self,nom,decimale=4,sortie=True):
+    def distance_hull(self,nom,prec=4,sortie=True):
         """
         Méthode qui donne l'écart en énergie par rapport à l'enveloppe covexe du composé 'nom'
         si il n'est pas stable elle donne la décomposition (peut être empéché avec sortie=False)
-        Les valeur sont donnée avec 'decimale' chiffres après la virgule 
+        Les valeur sont donnée avec 'prec' chiffres après la virgule 
         """
         index=self.nom.index(nom)
         compo=self.composition[index]
@@ -276,7 +277,7 @@ distance_hull(nom)
         nom_dcp=[self.nom[i] for i in decomposition_points]
         ecompo=self.energie[index]
         de=ecompo-ehull
-        if round(de,decimale)==0:
+        if round(de,prec)==0:
             print('Ce composé est stable')
             ifstable=True
         else :
@@ -291,8 +292,8 @@ distance_hull(nom)
                 result=resol(matrix)
                 if (result[:,:-1]==identite(self.dim)).all() :
                     proportion=result[:,-1]
-                    fmt="{:."+str(decimale)+"f}"
-                    fmt2="{:."+str(decimale)+"f}({:}) + "
+                    fmt="{:."+str(prec)+"f}"
+                    fmt2="{:."+str(prec)+"f}({:}) + "
                     print("Le composé",nom," n'est pas stable")
                     print("--------------------------------------------")
                     print("\u0394H = "+fmt.format(de))
