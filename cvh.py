@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 #Infos code
-VERSION=2.4
-NAME_CODE='cvh'
-DEPENDANCE='cvh_fonc.py'
+VERSION    = 2.4
+NAME_CODE  = 'cvh'
+DEPENDANCE = 'cvh_fonc.py'
+AUTHOR     = 'S. Junier'
 
 #Module
 from scipy.spatial import ConvexHull as cvh
