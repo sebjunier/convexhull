@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #Infos code
-VERSION    = 2.4
+VERSION    = 2.4 # Date : 30/05/2023
 NAME_CODE  = 'cvh'
 DEPENDANCE = 'cvh_fonc.py'
 AUTHOR     = 'S. Junier'
