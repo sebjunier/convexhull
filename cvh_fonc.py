@@ -1,4 +1,3 @@
-#!/home/sjunier/miniconda3
 # -*- coding: utf-8 -*-
 
 #Info module
