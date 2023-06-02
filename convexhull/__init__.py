@@ -315,7 +315,8 @@ sommets (np.array([nf,c+1],float)) : Sommets de la facette
         de          = ecompo-ehull # différence d'énergie
         
         if round(de, accuracy) == 0 :
-            print("Le composé",nom," est stable")
+            if sortie :
+                print("Le composé",nom," est stable")
             ifstable = True
         else :   # Si le composé n'est pas stable on cherche la décomposition de phases (meme calcul que self.phases_stables)
             ifstable = False
@@ -350,4 +351,60 @@ sommets (np.array([nf,c+1],float)) : Sommets de la facette
                     sys.exit('Erreur dans la resolution des équations')
                     
         return de,ifstable
+    
+    def tableau_complet(self, elements_purs, save_csv=False) :
+        """Extrait dans un taleau la différence par rapport à l'enveloppe convexe pour chaque composé
+
+        Args:
+            elements_purs ([str], len=dim): Liste des éléments du tableau composition
+            save_csv (bool, optional): Si True, extrait le tableau dans un fichier data.csv (Defaults to False)
+
+        Returns:
+           list : clés du tableau
+           lsit : valeurs du tableau 
+        """
+        keys_tab = ['Nom']
+        
+        if len(elements_purs) != self.dim :
+            sys.exit('elements_purs doit etre une liste de la même taille que la dimension du problème')
+        for elem in elements_purs :
+            if type(elem) == str:
+                keys_tab.append('x('+elem+')')
+            else :
+                sys.exit('elements_purs doit etre une liste de chaine de caractère')
+        keys_tab.append('Stabilité')
+        keys_tab.append("Ecart à l'enveloppe")
+        
+        N_keys = len(keys_tab)
+        
+        out_tab = []
+        for i in range(self.npoints) :
+            out_tab.append([])
+            out_tab[-1].append(self.nom[i])
+            
+            for j in range(self.dim) :
+                out_tab[-1].append(self.composition[i,j])
+            diff_hull, ifstable = self.distance_hull(self.nom[i],sortie=False)
+            if ifstable :
+                out_tab[-1].append('oui')    
+                out_tab[-1].append(0)
+            else :
+                out_tab[-1].append('non')    
+                out_tab[-1].append(diff_hull)
+        
+        if save_csv :
+            with open('data.csv','w') as file :
+                line = ''
+                for x in keys_tab :
+                    line += x + ','
+                file.write(line[:-1]+'\n')
+                for i in range(self.npoints) :
+                    line = ''
+                    for x in out_tab[i]:
+                        line += str(x) + ','
+                    file.write(line[:-1]+'\n')
+        
+        return keys_tab, out_tab 
+        
+            
         
