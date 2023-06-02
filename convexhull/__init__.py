@@ -4,7 +4,7 @@ Calcul d'enveloppe convexe, au sens thermodynamiques, à n dimensions.
 """
 
 #Infos code
-VERSION    = 3.0 # Date : 30/05/2023
+VERSION    = 3.1 # Date : 30/05/2023
 AUTHOR     = 'S. Junier'
 
 #Module
@@ -20,9 +20,11 @@ Déterminer la stabilité des phases par calcul d'enveloppe convexe. Elle prend 
 Paramètres :
 ------------
 nom ([str], len=N) : Nom des phases
-composition ([[float]],shape=(N,c)) : Compsitions des phases
-energie (float, len=N) : Energie des phases
+composition (np.array([N,c], flaot) : Compositions des phases
+energie (np.array([N], float) : Energie des phases
 accuracy (int, default=4) : Nombre de chiffres après la virgule utilisé pour les compositions
+
+Les entrées np.array peut être mise sous forme de liste équivalente.
 
 Attributs :
 -----------
@@ -44,13 +46,6 @@ sommets (np.array([nf,c+1],float)) : Sommets de la facette
 """
     def __init__(self, nom, composition, energie, accuracy=4) :
         #========================================= Verification des données d'entrée ==============================================================
-        #Taille des tableaux d'entrée
-        if not len(nom) == len(composition) == len(energie) :
-            print("Erreur dans les paramètres d'entrée :")
-            print("Les variables 'nom', 'composition' et 'energie' doivent avoir la même longeur")
-            print("ici : ", len(nom) ,len(composition), len(energie))
-            sys.exit()
-            
         #Tableau des compositions
         try :
             np.array(composition, dtype='float64')
@@ -99,6 +94,13 @@ sommets (np.array([nf,c+1],float)) : Sommets de la facette
         except :
             print("Erreur dans les paramètres d'entrée :")
             print("'energie' doit être une liste de nombre")
+            sys.exit()
+            
+        #Taille des tableaux d'entrée
+        if not len(nom) == len(composition) == len(energie) :
+            print("Erreur dans les paramètres d'entrée :")
+            print("Les variables 'nom', 'composition' et 'energie' doivent avoir la même longeur")
+            print("ici : ", len(nom) ,len(composition), len(energie))
             sys.exit()
             
         #===============================================================================Attributs===========================================================
