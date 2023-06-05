@@ -43,7 +43,8 @@ def clic_bouton(): # Lance le calcul si tout les paramètre sont ok
             key_name = B_key_name.get()
             
             # Erreur sur la valeurs des paramètres
-            key_file = np.loadtxt(file_in,dtype=str,delimiter=',')[0]
+            key_file = np.loadtxt(file_in, dtype=str, delimiter=',', encoding='utf8')[0]
+            print(key_file)
             list_error = []
             for key in [key_name,key_energy]:
                 if key not in key_file :
@@ -177,20 +178,20 @@ def extract_tab(tab, keys) :
 
 #Extraction donée
 
-data = np.loadtxt(file_in,dtype=str,delimiter=',')
+data = np.loadtxt(file_in, dtype=str, delimiter=',', encoding='utf8')
 
-energy = extract_tab(data,key_energy)
-energy = np.array(energy,'float64')
+energy = extract_tab(data, key_energy)
+energy = np.array(energy, 'float64')
 
-name = extract_tab(data,key_name)
+name = extract_tab(data, key_name)
 name = [x.strip() for x in name]
 
-compo = extract_tab(data,element)
-compo = np.array(compo,'float64')
+compo = extract_tab(data, element)
+compo = np.array(compo, 'float64')
 compo = [[y/x.sum() for y in x] for x in compo]
-compo = np.array(compo,'float64')
+compo = np.array(compo, 'float64')
 
 #Calcul et sorite
 
 hull = cvhull(name, compo, energy)
-hull.tableau_complet(element,save_csv=file_out)
+hull.tableau_complet(element, save_csv=file_out)
