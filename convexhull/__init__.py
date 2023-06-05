@@ -352,12 +352,12 @@ sommets (np.array([nf,c+1],float)) : Sommets de la facette
                     
         return de,ifstable
     
-    def tableau_complet(self, elements_purs, save_csv=False) :
+    def tableau_complet(self, elements_purs, save_csv=None) :
         """Extrait dans un taleau la différence par rapport à l'enveloppe convexe pour chaque composé
 
         Args:
             elements_purs ([str], len=dim): Liste des éléments du tableau composition
-            save_csv (bool, optional): Si True, extrait le tableau dans un fichier data.csv (Defaults to False)
+            save_csv (str) : Nom du fichier de sortie. si None ne crée pas de fichier
 
         Returns:
            list : clés du tableau
@@ -392,8 +392,8 @@ sommets (np.array([nf,c+1],float)) : Sommets de la facette
                 out_tab[-1].append('non')    
                 out_tab[-1].append(diff_hull)
         
-        if save_csv :
-            with open('data.csv','w') as file :
+        if save_csv != None :
+            with open(save_csv+'.csv','w') as file :
                 line = ''
                 for x in keys_tab :
                     line += x + ','
