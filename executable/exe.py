@@ -44,7 +44,6 @@ def clic_bouton(): # Lance le calcul si tout les paramètre sont ok
             
             # Erreur sur la valeurs des paramètres
             key_file = np.loadtxt(file_in, dtype=str, delimiter=',', encoding='utf8')[0]
-            print(key_file)
             list_error = []
             for key in [key_name,key_energy]:
                 if key not in key_file :
