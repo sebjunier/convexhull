@@ -1,6 +1,12 @@
 # convexhull
 Le code `convexhull` permet de tracer l'enveloppe convexe à N dimension à partir de l'énergie d'un set de phases. Il est basé sur l'algorithme quickhull [1].
 On peut obtenir la liste des phases sur l'enveloppe convexe, l'écart en énergie par rapport à l'enveloppe. On peut également obtenir la décomposition de phases à une composition donnée ou à partir d'une phases qui n'est pas sur l'enveloppe convexe.  
+
+## Instalation
+ * enter dans le dossier principal
+ * assurer vous que le fichier setup.py est présent
+ * exécuter : $ pip install . (pensez à lancer la commande dans l'environement désiré)
+
 ## Format
 Le code est rédigé dans le fichier `cvh.py` sous forme d'une classe python `cvhull` avec plusieurs atributs et méthodes. La classe est commenté, on peut donc obtenir sont utilisation et celles de ses méthodes en appliquant la fonction help. 
 Certaines fonctions sont répertoriés dans le fichier `cvh_func.py`.
