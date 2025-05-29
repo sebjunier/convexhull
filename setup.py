@@ -4,13 +4,13 @@ from setuptools import setup, find_packages
 
 setup(
 name="convexhull",
-      version="3.2.1",
-      description="Calcul d'enveloppe convexe",
+      version="4.0",
+      descriptConvexhull calculationn",
       author="Sebastien Junier",
       # packages created
       packages=find_packages(),
       # dependances
-      install_requires=["numpy", "scipy"],
+      install_requires=["numpy"],
       # install parameters...
       #license="Apache 2.0",
       )
