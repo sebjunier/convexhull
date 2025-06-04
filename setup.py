@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
 name="convexhull",
       version="4.0",
-      descriptConvexhull calculationn",
+      description="Convexhull calculation",
       author="Sebastien Junier",
       # packages created
       packages=find_packages(),
