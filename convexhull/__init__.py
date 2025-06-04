@@ -48,6 +48,8 @@ For each nf facets of the convexhull :
 		self.dim      = composition.shape[1]
 		if type(species) ==  type(None) :
 			self.species = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[:self.dim])
+		else :
+			self.species = species
 
 		vertix = np.zeros((0,self.dim),dtype='int')
 		hPlan  = np.zeros((0,self.dim+1),dtype='int')
