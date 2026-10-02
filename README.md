@@ -23,7 +23,8 @@ The directory also contains a tutorial Jupyter notebook demonstrating the main f
 
 ## Dependencies
 
-* `numpy`
+* `numpy` (inclued in installation)
+*  `pandas` (optional, but used in the tutorial)
 
 ## `cvhull` class
 
