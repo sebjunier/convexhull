@@ -32,47 +32,53 @@ The `cvhull` class takes a set of N phases containing c elements as input and de
 
 ### Parameters
 
-* `nom` str[N] : list of names of the input phases
+* `name` str[N] : list of names of the input phases
 * `composition` float[N,c] : array containing the compositions of the phases
-* `energie` float[N] : array containing the energies of the phases
-* `prec` int : number of decimal places used for the compositions (default: 4)
-  *All phases must have unique names.*
-  *The code requires all reference phases (pure elements) to be provided. They must therefore be included in the input, even if their energy is equal to 0.*
+* `energy` float[N] : array containing the energies of the phases
+* `species` str[c] : list of chemical species (default: A, B, C, ...)
+* `accuracy` int : number of decimal places used for the compositions (default: 4)
+
+
+*All phases must have unique names.*
+*The code requires all reference phases (pure elements) to be provided. They must therefore be included in the input, even if their energy is equal to 0.*
 
 ### Attributes
 
-* `cvhull.nom` str[N] : list of names of the input phases
-
-* `cvhull.composition` np.array([N,c],float) : array containing the phase compositions
-
-* `cvhull.energie` np.array([N],float) : array containing the phase energies
-
-* `cvhull.points` np.array([N,c],float) : array of points in the format required by Quickhull [independent compositions + energy]
-
+* `cvhull.name` str[N] : list of names of the input phases
+* `cvhull.composition` float[N,c] : array containing the phase compositions
+* `cvhull.energy` float[N] : array containing the phase energies
 * `cvhull.npoints` int : number of phases
-
 * `cvhull.dim` int : dimensionality of the phase space
+* `cvhull.accuracy` int : number of decimal places used for the compositions
 
-* `cvhull.prec` int : number of decimal places used for the compositions
+* `cvhull.stable` int[Ns] : index of the stable phases
+* `cvhull.instable` int[Ni] : index of the unstable phases
 
-* `cvhull.stable` np.array([N],int) : indices of the stable phases
+For each of the nf facets of the convex hull:                                              
 
-* `cvhull.instable` np.array([N],int) : indices of the unstable phases
-
-* `cvhull.equations` np.array([n,c+1],float) : parameters $p_i$ of the hyperplane equations defining the convex hull (e.g. in 2D: $p_1x+p_2y+p_3=0$)
-
-* `cvhull.sommets` np.array([n,c+1],float) : vertices defining the hyperplanes
+* `cvhull.nfacets` int : number of facets
+* `cvhull.hplan` float[nf,c+1] : parameters (p_i) defining the hyperplane equation (e.g. in 2D: $p_1x+p_2y+p_3=0$)
+* `cvhull.vertix float[nf,c+1] : Vertices of the facet
 
 ### Methods
 
-* `cvhull.energie_hull(compo)`
-  Returns the energy of the convex hull at the specified composition `compo` (float[c]).
+* `cvhull.energy_hull(compo)`
+  Return the energy of the convex hull at the specified composition `compo`
 
-* `cvhull.energie_compose(nom)`
-  Returns the energy of the phase `nom` (str).
+* `cvhull.energy_compound(compound)`
+  Return the energy of the phase `compound`
 
-* `cvhull.phases_stables(compo,prec=4)`
-  Returns the phase decomposition at the specified composition `compo` (float[c]). The resulting values are given with `prec` decimal places (default: 4).
+* `cvhull.print_stables()`
+  Print the list of stable phases
 
-* `cvhull.distance_hull(nom,prec=4,sortie=True)`
-  Returns the energy above the convex hull for the phase `nom` (str). If the phase is unstable, the method also returns its phase decomposition. This behavior can be disabled by setting `sortie=False`.
+* `cvhull.equilibrium(compo)`
+ Display the phases equilibrium at composition `compo`
+
+* `cvhull.distance_hull(name)`
+  Display the deviation from the convex hull and the decompotion phases
+
+* `cvhull.info_compound(name)`
+ Display all info about the compound `name`
+
+* `cvhull.table_dhull(name)`
+  Return a dictionory of stability for all compound
