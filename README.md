@@ -65,8 +65,8 @@ For each of the nf facets of the convex hull:
 * `cvhull.energy_hull(compo)`
   Return the energy of the convex hull at the specified composition `compo`
 
-* `cvhull.energy_compound(compound)`
-  Return the energy of the phase `compound`
+* `cvhull.energy_compound(name)`
+  Return the energy of the phase `name`
 
 * `cvhull.print_stables()`
   Print the list of stable phases
