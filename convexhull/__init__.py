@@ -90,7 +90,7 @@ For each of the nf facets of the convex hull:
 		self.instable = np.array([ x for x in range(self.npoints) if x not in self.stable])
     
 #================================== Instance methods ===========================================  
-	def energie_hull(self, compo, returnFacet=False) :
+	def energy_hull(self, compo, returnFacet=False) :
 		"""Return energy of convexhull at composition 'compo' """
 		compo = np.array(compo, dtype='float')
 		compo = compo/compo.sum()
@@ -103,8 +103,8 @@ For each of the nf facets of the convex hull:
 		else :
 			return energyList[index]
     
-	def energy_compound(self, compound):
-		"""Return energy of copound `compound`"""
+	def energy_compound(self, name):
+		"""Return energy of copound `name`"""
 		if compound not in self.name :
 			raise ValueError(f"{compound} is not in the data abse")
 		index = self.name.index(compound)
@@ -185,7 +185,7 @@ For each of the nf facets of the convex hull:
                     
 		return dhull
 
-	def info_compond(self, name) :
+	def info_compound(self, name) :
         """Display all info about the compound `name` """
 		print(f'Info about compound : {name}')
 		print('------------------------------------')
