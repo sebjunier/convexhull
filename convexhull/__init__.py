@@ -105,13 +105,13 @@ For each of the nf facets of the convex hull:
     
 	def energy_compound(self, name):
 		"""Return energy of copound `name`"""
-		if compound not in self.name :
-			raise ValueError(f"{compound} is not in the data abse")
-		index = self.name.index(compound)
+		if name not in self.name :
+			raise ValueError(f"{name} is not in the data abse")
+		index = self.name.index(name)
 		return self.energy[index]
 
 	def print_stables(self) :
-        """ Print the list of stable phases."""
+		""" Print the list of stable phases."""
 		print(f'The database consist of {self.npoints} compounds with {len(self.stable)} stable')
 		print()
 		print('List of stable compounds:')
@@ -140,7 +140,7 @@ For each of the nf facets of the convex hull:
 		compo = np.array(compo, dtype='float')
 		compo = compo/compo.sum()
 
-		ehull, ieq = self.energie_hull(compo, returnFacet=True) # Hull energy and facet index
+		ehull, ieq = self.energy_hull(compo, returnFacet=True) # Hull energy and facet index
 		dp_index = self.vertix[ieq] # stable phases (Decomposion Points)
 		dp_name = [ self.name[i] for i in dp_index ]
 		# Resolve matrix of composition
@@ -165,7 +165,7 @@ For each of the nf facets of the convex hull:
 		"""Display the deviation from the convex hull and the decompotion phases"""
 		index = self.name.index(name)
 		compo = self.composition[index,:]
-		ehull = self.energie_hull(compo)
+		ehull = self.energy_hull(compo)
 		if index in self.stable :
 			dhull = 0
 		else:
@@ -186,7 +186,7 @@ For each of the nf facets of the convex hull:
 		return dhull
 
 	def info_compound(self, name) :
-        """Display all info about the compound `name` """
+		"""Display all info about the compound `name` """
 		print(f'Info about compound : {name}')
 		print('------------------------------------')
 		print(f'E = {self.energy_compound(name)}')
