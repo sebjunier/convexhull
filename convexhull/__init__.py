@@ -11,31 +11,32 @@ Class to calculate convexhull for materials data.
 
 Parameters :
 ------------
-name (list, len=N) : Name of compounds
-composition (np.array([N,c], float) : Composition of compounds (or number of atoms)
-energy (np.array([N], float) : Energie des phases
-species (list(str), len=c) : list of species (default: A,B,C,...)
-accuracy (int, default=4) : Significatif numbers of compositions
+* name (list, len=N) : Names of the compounds
+* composition (np.array([N,c], float)) : Compositions of the compounds (or number of atoms)
+* energy (np.array([N], float)) : Energy of the phases
+* species (list(str), len=c) : List of chemical species (default: A, B, C, ...)
+* accuracy (int) : Number of significant digits used for the compositions (default: 4)
 
 N: number of compound
 c: number of species
 
 Attributs :
 -----------
-name (list, len=N) : Name of compounds
-composition (np.array([N,c], float) : Composition of compounds
-energy (np.array([N], float) : Energie des phases
-species (list, len=c) : list of species (default: A,B,C,...)
-npoints (int) : Compounds number
-dim (int) : Species number
-accuracy (int, default=4) : Significatif numbers of compositions
+* name (list, len=N) : Name of compounds
+* composition (np.array([N,c], float) : Composition of compounds
+* energy (np.array([N], float) : Energy of the phases
+* species (list, len=c) : list of chemical species (default: A,B,C,...)
+* npoints (int) : Compounds number
+* dim (int) : Species number
+* accuracy (int) : Significatif numbers of compositions
 
-stable (np.array([N],int)) : Index of compounds on the convex hull
-instable (np.array([N],int)) : Index of compounds out of the convex hull
+* stable (np.array([N],int)) : Index of compounds on the convex hull
+* instable (np.array([N],int)) : Index of compounds out of the convex hull
 
-For each nf facets of the convexhull :
-    equations (np.array([nf,c+1],float)) : Paramètres (pi) de l'équation de l'hyper-plan (\sum_{i=0}^{N-3}(p[i] * x[i]) + p[N-2]*y + p[N-1] = 0 )
-    sommets (np.array([nf,c+1],float)) : Sommets de la facette
+For each of the nf facets of the convex hull:
+* nfacets (int) : number of facets
+* hplan (np.array([nf,c+1], float)) : Parameters (p_i) defining the hyperplane equation
+* vertix (np.array([nf,c+1], float)) : Vertices of the facet
 
 """
 	def __init__(self, name, composition, energy, species=None, accuracy=4) :
@@ -110,6 +111,7 @@ For each nf facets of the convexhull :
 		return self.energy[index]
 
 	def print_stables(self) :
+        """ Print the list of stable phases."""
 		print(f'The database consist of {self.npoints} compounds with {len(self.stable)} stable')
 		print()
 		print('List of stable compounds:')
@@ -160,7 +162,7 @@ For each nf facets of the convexhull :
 
 	
 	def distance_hull(self, name, verbose=True):
-		""" """
+		"""Display the deviation from the convex hull and the decompotion phases"""
 		index = self.name.index(name)
 		compo = self.composition[index,:]
 		ehull = self.energie_hull(compo)
@@ -184,14 +186,15 @@ For each nf facets of the convexhull :
 		return dhull
 
 	def info_compond(self, name) :
-		print(f'Info about compound : {name})')
+        """Display all info about the compound `name` """
+		print(f'Info about compound : {name}')
 		print('------------------------------------')
 		print(f'E = {self.energy_compound(name)}')
 		self.distance_hull(name)
 
 
 	def table_dhull(self) :
-		""" """
+		""" Return a dictionory of stability for all compound"""
 		keys_tab = ['Name']+list(self.species)+["Stability", "Deviation from hull"]
 		out_tab = {}
 		for i in keys_tab :
